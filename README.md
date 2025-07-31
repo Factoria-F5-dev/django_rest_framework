@@ -21,6 +21,12 @@
 - Docker and Docker Compose
 - Workbench instalado para hacer pruebas en local de ser necesario
 
+## Clona la Rama `simple-rest-CRUD`
+
+```bash
+git clone -b simple-rest-CRUD --single-branch https://github.com/Factoria-F5-madrid/CRUD-django_rest_framework.git
+```
+
 ### Estructura de carpetas
 ```plaintext
 
@@ -78,6 +84,7 @@ crud_python/ # Carpeta donde guardas tu proyecto
  ```
 
  - Crea una cuenta en [Docker hub](https://www.docker.com/products/docker-hub/) para subir imágenes de docker públicas - como un github pero de imágenes de docker -
+
 
 ## Conexión a la Base de Datos usando .env
 
