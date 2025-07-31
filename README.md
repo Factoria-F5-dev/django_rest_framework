@@ -67,6 +67,29 @@ crud_python/ # Carpeta donde guardas tu proyecto
 ├── requirements.txt
 ```
 
+
+### Al abrir el proyecto:
+
+Crear el entorno virtual
+```bash
+python -m venv .venv
+```
+
+Iniciar el entorno virtual
+```bash
+.venv/Scripts/activate
+```
+Instalar las dependencias necesarias
+
+```bash
+ pip install django mysqlclient dotenv django-cors-headers djangorestframework streamlit
+```
+
+lleva estas dependecias al requirements.txt (Sí, vamos a sobreescribir 😉):
+```bash
+pip freeze > requirements.txt
+```
+
 ## Cuentas necesarias
  - Crea una cuenta en [railway](https://railway.com/) para tener un servidor gratuito SQL, usa esos datos para llenar tu archivo `.env` sigue los pasos en la web.
 
@@ -85,17 +108,30 @@ crud_python/ # Carpeta donde guardas tu proyecto
 
  - Crea una cuenta en [Docker hub](https://www.docker.com/products/docker-hub/) para subir imágenes de docker públicas - como un github pero de imágenes de docker -
 
+## Configuración del archivo .env
 
-## Conexión a la Base de Datos usando .env
+Crea un archivo `.env` en la raíz de tu proyecto y añade las variables de conexión a tu base de datos:
 
-Para proteger información sensible como las credenciales de tu base de datos, es recomendable usar un archivo `.env` para almacenar estas configuraciones de manera segura.
-
-### Instalación de requirements.txt
-
-
-```bash
- pip install -r requirements.txt
+```env
+DB_NAME=nombre_base_de_datos
+DB_USER=usuario
+DB_PASSWORD=contraseña
+DB_HOST=localhost  # o la dirección de tu servidor de base de datos
+DB_PORT=3306       # o el puerto que uses (por defecto es 3306 para MySQL)
 ```
+
+Y ahora creamos otro archivo  `.env.docker`
+
+```env
+DB_NAME=nombre_base_de_datos
+DB_USER=usuario
+DB_PASSWORD=contraseña
+DB_HOST=db  # debe referenciar al servicio que creadp en docker
+DB_PORT=3306       # o el puerto que uses (por defecto es 3306 para MySQL)
+```
+
+También puedes crear un archivo `.env.example` con la estructura que ves arriba.
+
 
 ### Cambia tu Seeting.py
 
@@ -285,53 +321,6 @@ REST_FRAMEWORK = {
 }
 ```
 
-## Configuración del archivo .env
-
-Crea un archivo `.env` en la raíz de tu proyecto y añade las variables de conexión a tu base de datos:
-
-```env
-DB_NAME=nombre_base_de_datos
-DB_USER=usuario
-DB_PASSWORD=contraseña
-DB_HOST=localhost  # o la dirección de tu servidor de base de datos
-DB_PORT=3306       # o el puerto que uses (por defecto es 3306 para MySQL)
-```
-
-Y ahora creamos otro archivo  `.env.docker`
-
-```env
-DB_NAME=nombre_base_de_datos
-DB_USER=usuario
-DB_PASSWORD=contraseña
-DB_HOST=db  # debe referenciar al servicio que creadp en docker
-DB_PORT=3306       # o el puerto que uses (por defecto es 3306 para MySQL)
-```
-
-También puedes crear un archivo `.env.example` con la estructura que ves arriba.
-
-## Modificación de settings.py
-
-Actualiza settings.py para que Django cargue estas variables de entorno y configure la conexión a la base de datos:
-
-```python
-import os
-from dotenv import load_dotenv
-
-# Cambiamos la connexión de base de datos a una Mysql
-load_dotenv()
-[...]
-DATABASES = {
-    'default': {
-            'ENGINE': 'django.db.backends.mysql',  # Cambia el motor a MySQL o postgres según tu base de datos
-            'NAME': os.getenv('DB_NAME'),          # Nombre de tu base de datos
-            'USER': os.getenv('DB_USER'),          # Usuario de tu base de datos
-            'PASSWORD': os.getenv('DB_PASSWORD'),  # Contraseña del usuario
-            'HOST': os.getenv('DB_HOST'),          # Dirección del servidor de la base de datos (e.g., 'localhost')
-            'PORT': os.getenv('DB_PORT', 3306),
-        }
-}
-```
-
 ## Dockerización
 
 ### Configuración
@@ -493,27 +482,27 @@ volumes:
 
 3. **Construir y ejecutar los contenedores:**
 
-    ```bash
-    docker-compose up --build -d
-    ```
+```bash
+docker-compose up --build -d
+```
 
-    Este comando construirá la imagen de Docker para el servicio web e iniciará los contenedores `web` y `db`.
+Este comando construirá la imagen de Docker para el servicio web e iniciará los contenedores `web` y `db`.
 
 4. **Aplicar migraciones:**
 
-    Una vez que los contenedores estén ejecutándose, necesitas aplicar las migraciones de la base de datos en otra terminal **NO DETENGAS EL PROCESO DE LOS CONTENEDORES**:
+Una vez que los contenedores estén ejecutándose, necesitas aplicar las migraciones de la base de datos enotra terminal **NO DETENGAS EL PROCESO DE LOS CONTENEDORES**:
 
-    ```bash
-    docker-compose exec web python sistema_libros/manage.py migrate
-    ```
+```bash
+docker-compose exec web python sistema_libros/manage.py migrate
+```
 
 5. **Crear un superusuario (opcional):**
 
-    Para acceder al panel de administración de Django:
+Para acceder al panel de administración de Django:
 
-    ```bash
-    docker-compose exec web python sistema_libros/manage.py createsuperuser
-    ```
+```bash
+docker-compose exec web python sistema_libros/manage.py createsuperuser
+```
 
 ### Comandos útiles de Docker
 
@@ -534,7 +523,7 @@ docker-compose down -v
 docker-compose build web
 
 # Ejecutar comandos dentro del contenedor web
-docker-compose exec web python sistema_libros/manage.py shell
+docker-compose exec web python manage.py shell
 ```
 
 ## Deployment a Docker Hub y Render
