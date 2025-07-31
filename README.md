@@ -493,7 +493,7 @@ Este comando construirá la imagen de Docker para el servicio web e iniciará lo
 Una vez que los contenedores estén ejecutándose, necesitas aplicar las migraciones de la base de datos enotra terminal **NO DETENGAS EL PROCESO DE LOS CONTENEDORES**:
 
 ```bash
-docker-compose exec web python sistema_libros/manage.py migrate
+docker-compose exec web python manage.py migrate
 ```
 
 5. **Crear un superusuario (opcional):**
@@ -501,7 +501,7 @@ docker-compose exec web python sistema_libros/manage.py migrate
 Para acceder al panel de administración de Django:
 
 ```bash
-docker-compose exec web python sistema_libros/manage.py createsuperuser
+docker-compose exec web python manage.py createsuperuser
 ```
 
 ### Comandos útiles de Docker
