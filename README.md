@@ -96,16 +96,6 @@ pip freeze > requirements.txt
  Aquí vas a encontrar las variables públicas, asegúrate de usar los datos de la url pública.
  ![alt text](./assets/image-12.png)
 
- Una vez creada tu cuenta y tu base de datos, haz en tu local:
-
- ```bash
- python manage.py makemigrations
- ```
-
-  ```bash
- python manage.py migrate
- ```
-
  - Crea una cuenta en [Docker hub](https://www.docker.com/products/docker-hub/) para subir imágenes de docker públicas - como un github pero de imágenes de docker -
 
 ## Configuración del archivo .env
@@ -320,6 +310,16 @@ REST_FRAMEWORK = {
     ],
 }
 ```
+
+ Una vez creada tu cuenta y tu base de datos y modificado el settings, haz en tu local:
+
+ ```bash
+ python manage.py makemigrations
+ ```
+
+  ```bash
+ python manage.py migrate
+ ```
 
 ## Dockerización
 
