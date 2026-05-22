@@ -32,7 +32,7 @@ pip install Django
 2. Crea un nuevo proyecto Django:
 
 ```bash
-django-admin startproject libreria
+django-admin startproject sistema_libros
 cd libreria
 ```
 
@@ -69,7 +69,7 @@ INSTALLED_APPS = [
 crud_python/ # Carpeta donde guardas tu proyecto
 │
 ├── manage.py
-├── libreria/
+├── sistema_libros/
 │   ├── __init__.py
 │   ├── settings.py
 │   ├── urls.py
@@ -162,10 +162,11 @@ En libros/models.py, crea el modelo Libro:
 from django.db import models
 
 class Libro(models.Model):
-    titulo = models.CharField(max_length=100)
+    titulo = models.CharField(max_length=200)
     autor = models.CharField(max_length=100)
-    isbn = models.CharField(max_length=13, unique=True)
+    descripcion = models.TextField()
     fecha_publicacion = models.DateField()
+    isbn = models.CharField(max_length=13, unique=True)
 
     def __str__(self):
         return self.titulo
@@ -194,14 +195,16 @@ En Django, debes hacer migraciones cada vez que realizas cambios en los modelos 
 
 ## Implementación del Serializador
 
-Crea libros/serializers.py:
+Un **serializer** o **serializador** es como un traductor entre tu base de datos y tu API: toma los objetos de Django (por ejemplo un modelo Libro o Categoria) y los convierte en JSON para que el frontend o cualquier cliente pueda entenderlos, y también hace el proceso inverso, recibiendo datos JSON y transformándolos en objetos válidos de Django.
+
+Crea libros/serializer.py:
 
 ```python
-from rest_framework import serializers
+from rest_framework import serializer
 from .models import Libro
 
-class LibroSerializer(serializers.ModelSerializer):
-    categorias = serializers.SerializerMethodField()
+class LibroSerializer(serializer.ModelSerializer):
+    categorias = serializer.SerializerMethodField()
 
     class Meta:
         model = Libro
@@ -228,11 +231,11 @@ class LibroSerializer(serializers.ModelSerializer):
 o también podría ser así:
 
 ```python
-from rest_framework import serializers
+from rest_framework import serializer
 from .models import Libro
 
-class LibroSerializer(serializers.ModelSerializer):
-    categorias = serializers.SerializerMethodField()
+class LibroSerializer(serializer.ModelSerializer):
+    categorias = serializer.SerializerMethodField()
     class Meta:
         model = Libro
         fields = '__all__'
@@ -255,13 +258,13 @@ class LibroSerializer(serializers.ModelSerializer):
         return instance
 ```
 
-Crea categorias/serializers.py:
+Crea categorias/serializer.py:
 
 ```python
-from rest_framework import serializers
+from rest_framework import serializer
 from .models import Categoria
 
-class CategoriaSerializer(serializers.ModelSerializer):
+class CategoriaSerializer(serializer.ModelSerializer):
     class Meta:
         model = Categoria
         fields = ['nombre_categoria']
@@ -274,7 +277,7 @@ En libros/views.py, crea vistas para las operaciones CRUD:
 ```python
 from rest_framework import generics
 from .models import Libro
-from .serializers import LibroSerializer
+from .serializer import LibroSerializer
 
 class ListaLibros(generics.ListCreateAPIView):
     libros = Libro.objects.all()
@@ -449,7 +452,7 @@ urlpatterns = [
 pip install streamlit
 ```
 
-2. Crea un archivo llamod app.py e ingresa este código básico:
+2. Crea un archivo llamado app.py e ingresa este código básico:
 ```python
 import streamlit as st
 import requests
@@ -475,6 +478,11 @@ if response.status_code == 200:
                 st.write(f"No se pudo borrar el libro {libro['id']}")
 else:
     st.write('No se encontraron libros')
+```
+
+**Ejecuta Streamlit**
+```bash
+streamlit run app.py
 ```
 
 ## Prueba de la API
